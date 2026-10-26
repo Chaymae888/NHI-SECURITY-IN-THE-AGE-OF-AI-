@@ -1,0 +1,26 @@
+id,type,identity,credential,tool,action,resource,precondition,expected_decision,expected_reason_code
+S01,authz,agent-deploy-reader,valid,database,query,deployments,,ALLOW,ALLOW
+S02,authz,agent-deploy-reader,valid,database,query,customers,,DENY,DENY_RESOURCE_OUT_OF_SCOPE
+S03,authz,agent-deploy-reader,valid,tickets,create,OPS,,DENY,DENY_TOOL_NOT_ALLOWED
+S04,authz,agent-deploy-reader,valid,documents,read,docs/public/readme.md,,ALLOW,ALLOW
+S05,authz,agent-deploy-reader,valid,documents,read,docs/internal/roadmap.md,,DENY,DENY_RESOURCE_OUT_OF_SCOPE
+S06,authz,agent-ticket-writer,valid,tickets,create,OPS,,ALLOW,ALLOW
+S07,authz,agent-ticket-writer,valid,tickets,create,SEC,,DENY,DENY_RESOURCE_OUT_OF_SCOPE
+S08,authz,agent-ticket-writer,valid,documents,read,docs/public/readme.md,,DENY,DENY_TOOL_NOT_ALLOWED
+S09,authz,agent-ticket-writer,valid,database,query,deployments,,DENY,DENY_TOOL_NOT_ALLOWED
+S10,authz,agent-reporting,valid,database,query,deployments,,ALLOW,ALLOW
+S11,authz,agent-reporting,valid,database,query,customers,,DENY,DENY_RESOURCE_OUT_OF_SCOPE
+S12,authz,agent-deploy-reader,revoked,database,query,deployments,credential revoked during demo,DENY,DENY_REVOKED
+S13,authz,agent-deploy-reader,valid,database,query,deployments,identity status set to suspended,DENY,DENY_IDENTITY_INACTIVE
+S14,authz,agent-legacy-admin,expired,database,query,customers,,DENY,DENY_EXPIRED
+S15,authz,agent-unknown,invalid,database,query,deployments,,DENY,DENY_UNAUTHENTICATED
+S16,authz,agent-deploy-reader,missing,database,query,deployments,no credential sent,DENY,DENY_UNAUTHENTICATED
+S17,tool_enforcement,agent-deploy-reader,none,database,query,deployments,request sent directly to the tool bypassing the Security API,DENY,TOOL_REJECTS_UNVERIFIED_REQUEST
+S18,tool_enforcement,agent-deploy-reader,valid,database,query,customers,tool called directly with a valid token but out-of-scope resource,DENY,DENY_RESOURCE_OUT_OF_SCOPE
+S19,prompt_injection,agent-deploy-reader,valid,tickets,create,OPS,LLM instructed by injected text to open a ticket,DENY,DENY_TOOL_NOT_ALLOWED
+S20,log_check,any,any,any,any,any,grep all logs and audit rows for credential values,PASS,NO_SECRET_FOUND
+R01,risk,agent-legacy-admin,,,,,run risk checks,FINDING,EXPIRED_BUT_ACTIVE
+R02,risk,agent-legacy-admin,,,,,run risk checks,FINDING,NO_OWNER
+R03,risk,agent-legacy-admin,,,,,run risk checks,FINDING,WILDCARD_PERMISSION
+R04,risk,agent-ticket-writer;agent-reporting,,,,,run risk checks,FINDING,SHARED_CREDENTIAL
+R05,risk,agent-deploy-reader,,,,,run risk checks,NO_FINDING,
